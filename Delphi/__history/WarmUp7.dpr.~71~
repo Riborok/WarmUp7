@@ -20,28 +20,40 @@ Var
   Num1 :array[1..MaxSize] of SmallInt;
   Num2 :array[1..(MaxSize * MaxAmount)] of SmallInt;
   Num3 :array[1..MaxSize] of SmallInt;
-  SuppVar :array[1..(MaxSize * MaxAmount)] of SmallInt;
+  Results :array[1..(MaxSize * MaxAmount)] of SmallInt;
   str :string;
   MaxNS, NS, Amount, j, Res, CarryRes, Sum, CarrySum : ShortInt;
   Prod, CarryProd, PosElement : Word;
-  Len1, Len2, Len3, i, k, l, p, o, DivEl, ToPosEl, CurrPosEl: Word;
-  flag, FoundLarger, DelZero, TakeaWay0, RemLessDiv: boolean;
-  //Num1 - array of digits of the first number (further the product of the two previous numbers)
-  //Num2 - array of digits of the second numbers (with which need to multiply the first number)
-  //ProdNums - array of digits of product of numbers (in the process of multiplication)
+  Len1, Len2, Len3, CurrElInQuotient, k,  i, p, ResDiv, ToPosEl, CurrPosEl: Word;
+  flag, FoundLarger, DelZero, RemLessDiv: boolean;
+  //Num1 - array of digits of the first number (divider)
+  //Num2 - array of digits of the second numbers (denominator)
+  //Num3 - array of digits of the third numbers (multiplier in the denominator)
+  //Results - at first product of two numbers in the denominator, then the result of dividing two numbers
   //str - string variable for writing numbers
   //MaxNS - maximum number system
   //NS - number system
   //Amount - amount of numbers
+  //Res - residual of digits in the selected range
+  //CarryRes - carry for residual
   //Sum - sum of all digits in the certain category (for ProdNums)
   //CarrySum - Òarry 1 (if there is) to the next element (for Sum)
-  //Len1 - the length of the first number
-  //Len2 - the length of the second number
   //Prod - product of the digits of the first and second number
   //CarryProd - Òarry the digit (if there is) to the next element (for Prod)
   //PosElement - the current position of the element in the multiplication
-  //i, j, k - cycle counter
+  //Len1 - the length of the first number
+  //Len2 - the length of the second number
+  //Len3 - the length of the third number
+  //CurrElInQuotient - current element in quotient
+  //i, j, k, p - cycle counter
+  //ResDiv - result of dividing a part of digits
+  //ToPosEl - up to which element will divide
+  //CurrPosEl - current position in the divider
   //flag - flag to confirm the correctness of entering numbers
+  //FoundLarger - when a larger number is found, the variable will become true
+  //DelZero - variable to remove the unnecessary zeros (if there is)
+  //RemLessDiv - when the remainder of the numerator (Num1) after dividing
+  //the previous elements is less than the denominator (Num2), the variable will be true
 
 Begin
 
@@ -65,6 +77,7 @@ Begin
       Writeln('Symbol ', NSAlphabet[i+1],' Value = ',i);
     Writeln;
 
+    Writeln('Attention! Numerator must be >= denominator');
     Writeln('Enter numbers (no more than ',MaxSize,' digits).');
 
     //Cycle with postcondition for entering correct data.
@@ -114,7 +127,7 @@ Begin
       //Initialize the flag
       flag:= False;
 
-      //Read the second number (with which need to add the first number) and check for correctness.
+      //Read the second number and check for correctness.
       Readln(str);
 
       //Find length of the first number
@@ -151,12 +164,7 @@ Begin
 
 
 
-
-
-
-
-
-    //The cycle go (Amount-1) times to multiply of all the numbers
+    //The cycle go (Amount-2) times to multiply all the numbers in the denominator
     for j := 1 to (Amount-2) do
     begin
 
@@ -168,18 +176,18 @@ Begin
         //Initialize the flag
         flag:= False;
 
-        //Read the second number (with which need to add the first number) and check for correctness.
+        //Read the third number and check for correctness.
         Readln(str);
 
-        //Find length of the first number
+        //Find length of the third number
         Len3:= length(str);
         if len3>MaxSize then
           flag:= True;
 
-        //Reset the second number for the input
+        //Reset the third number for the input
         FillChar(Num3, length(Num3), 0);
 
-        //Write the second number in mirrored view to an array
+        //Write the third number in mirrored view to an array
         i:=1;
         while (i<=Len3) and (flag = False) do
         begin
@@ -188,7 +196,7 @@ Begin
           Num3[i]:= Pos(str[Len3-i+1], NSAlphabet) - 1;
 
           //Checking for correct input in the number system
-          //Num2[i] will be <0 if the symbol is not in NSAlphabet
+          //Num3[i] will be <0 if the symbol is not in NSAlphabet
           if (Num3[i]<0) or (Num3[i]>=NS) then
             flag:= True;
 
@@ -201,7 +209,7 @@ Begin
 
       Until flag = False;
 
-      //Multiply the digit of the first number by the second number
+      //Multiply the digits of the second number by the third number
       for i := 1 to Len2 do
       begin
         for k := 1 to Len3 do
@@ -214,17 +222,17 @@ Begin
           //and add the carry (if there is).
           Prod:= Num2[i] * Num3[k] + CarryProd;
 
-          //The integer part of dividing by 10 is the carry that will go to the next element
+          //The integer part of dividing by NS is the carry that will go to the next element
           CarryProd:= Prod div NS;
 
           //Find the sum of digits in a current position element
-          Sum:= (CarrySum + SuppVar[PosElement] + (Prod mod NS));
+          Sum:= (CarrySum + Results[PosElement] + (Prod mod NS));
 
-          //The integer part of dividing by 10 is the carry that will go to the next element
+          //The integer part of dividing by NS is the carry that will go to the next element
           CarrySum:= Sum div NS;
 
-          //The modulo of the Sum by 10 is the digit in the c
-          SuppVar[PosElement] := Sum mod NS;
+          //The modulo of the Sum by NS is the digit in the Results
+          Results[PosElement] := Sum mod NS;
 
           //If there is a carry on the last digit of the second number, then add a carry to the next element
           if k = Len3 then
@@ -234,7 +242,7 @@ Begin
             begin
 
               //c in the next element is equal to the carry, since this element is new for multiplied
-              SuppVar[PosElement+1]:=CarryProd;
+              Results[PosElement+1]:=CarryProd;
 
               //Carry is assigned 0 for the next iterations
               CarryProd:=0;
@@ -245,7 +253,7 @@ Begin
 
               //c in the next element is equal to the sum of carry and c in the next element,
               //since this element was already for added
-              SuppVar[PosElement+1]:= CarrySum + SuppVar[PosElement+1];
+              Results[PosElement+1]:= CarrySum + Results[PosElement+1];
 
               //Carry is assigned 0 for the next iterations
               CarrySum:=0;
@@ -256,14 +264,14 @@ Begin
 
         //If in the last digits of the two numbers there is a number in the next position,
         //then the current position element increases
-        if (i = Len2) and (SuppVar[PosElement+1]>0) then
+        if (i = Len2) and (Results[PosElement+1]>0) then
           PosElement:= PosElement + 1;
 
       end;
 
       //For the next iteration, the first number becomes the product of the previous.
       for i := 1 to PosElement do
-        Num2[i]:= SuppVar[i];
+        Num2[i]:= Results[i];
 
       //Update the length of the first number
       Len2:= PosElement;
@@ -273,18 +281,21 @@ Begin
       CarryProd:= 0;
 
       //Reset the product of nums for the iteration
-      FillChar(SuppVar, length(SuppVar), 0);
+      FillChar(Results, length(Results), 0);
 
     end;
 
+
+
+
+
+    //Check that the number of digits in the numerator is >= digits in the denominator
     if Len2>Len1 then
       flag:= True
     else
     begin
 
-      //Searching the larger number. To do this, we compare the first numbers (in the mirrored view it is last).
-      //If they are equal, we move on.
-      //If the residual is negative, then there is no need to compare further (since will be the sum of negative numbers)
+      //Checking the condition: numerator >= denominator
       i:= Len1;
       FoundLarger:= False;
       while (i>=1) and (FoundLarger = False) do
@@ -309,43 +320,79 @@ Begin
 
     end;
 
+    //Checking the condition numerator >= denominator
     if flag = True then
-      Writeln('The denominator is greater than the numerator! Restart the program')
+      Writeln('Error! The denominator is greater than the numerator! Restart the program')
     else
     begin
 
-      ToPosEl:= Len1 - Len2 + 1;
+      //Initialize the variables (considering that they are written in mirrored view)
+      ToPosEl:= Len1 - Len2 + 2; //+2 since at the beginning of the cycle will decrease by 1
       CurrPosEl:= len1;
-      k:=0;
+      CurrElInQuotient:=0;
       repeat
 
-        k:= k+1;
-
-        DivEl:=0;
-
-        FoundLarger:= False;
-        TakeaWay0:= False;
-
+        //Initialize variables to remove the unnecessary zeros (if there is)
+        DelZero:= False;
         i:=CurrPosEl;
-        l:= Len2;
+        j:= ToPosEl;
+        while (i>=j) and (DelZero = False) do
+        begin
+
+          //When found the number (1..NS) exit the cycle
+          if (Num1[i] > 0) then
+            DelZero:= True
+
+          //Else (if CurrPosEl>1) move the current position of the element to the left
+          else if (CurrPosEl>1) then
+          begin
+
+            //Also move ToPosEl (one time less than CurrPosEl to maintain the logic of division into a column)
+            if (i<>CurrPosEl) then
+              ToPosEl:= ToPosEl - 1;
+
+            //Reduce CurrPosEl
+            CurrPosEl:= CurrPosEl - 1;
+          end;
+
+          //Modernize i
+          i:=i - 1;
+        end;
+
+        //After dividing, take out the next digit (if ToPosEl>1)
+        if (ToPosEl > 1) then
+          ToPosEl:= ToPosEl - 1;
+
+        //Initialize the variables
+        CurrElInQuotient:= CurrElInQuotient+1;
+        ResDiv:=0;
+        FoundLarger:= False;
+        i:=CurrPosEl;
+        j:= Len2;
+
+        //Compare two numbers: the highlighted part of the numerator and denominator
         while (i>=ToPosEl) and (FoundLarger = False) do
         begin
 
-          if (((CurrPosEl-ToPosEl+1)=Len2) and (Num1[i]>Num2[l])) or ((CurrPosEl-ToPosEl+1)>Len2)
-          or ((l = 1) and (Num1[i]=Num2[l])) then
+          //Checking conditions for division (the highlighted part of the numerator >= denominator)
+          if (((CurrPosEl-ToPosEl+1)=Len2) and (Num1[i]>Num2[j])) or ((CurrPosEl-ToPosEl+1)>Len2)
+          or ((j = 1) and (Num1[i]=Num2[j])) then
           begin
 
+            //Initialize the variables
             CarryRes:=0;
-            o:= 1;
+            k:= 1;
             p:= ToPosEl;
+
+            //Cycle to subtract two numbers: the highlighted part of the numerator and denominator
             while p<=CurrPosEl do
             begin
 
               //Considering the signs, starting to subtract the last digits of the numbers (in the mirrored view it is first)
               //and consider the carry (if there is).
-              Res:= Num1[p] - Num2[o] + CarryRes;
+              Res:= Num1[p] - Num2[k] + CarryRes;
 
-              //If the difference is less than zero, then we take 1 (for the current digit it is 10) from the next digit
+              //If the difference is less than zero, then we take 1 (for the current digit it is NS) from the next digit
               if Res < 0 then
               begin
                 Res:= Res + NS;
@@ -358,82 +405,90 @@ Begin
               //Put the result in the residual array c
               Num1[p]:= Res;
 
-              o:= o + 1;
+              //Modernize variables
+              k:= k + 1;
               p:= p + 1;
 
             end;
 
+            //Since the highlighted part of the numerator was taken away from the denominator once, perform +1
+            ResDiv:= ResDiv + 1;
+
+            //Checking for deletion of digits
             if (Num1[CurrPosEl] = 0) and (CurrPosEl > 1) then
             begin
-              i:= CurrPosEl;
+
+              //Correct CurrPosEl
               CurrPosEl:= CurrPosEl - 1;
+
+              //Reset i to initial value (considering changes CurrPosEl)
+              i:= CurrPosEl + 1;
             end
             else
+              //Reset i to initial value
               i:= CurrPosEl + 1;
 
-            DivEl:= DivEl + 1;
-
-            l:= len2 + 1;
+            //Reset j to initial value
+            j:= len2 + 1;
           end
 
-          else if ((CurrPosEl-ToPosEl+1)<Len2) or (((CurrPosEl-ToPosEl+1)=Len2) and (Num1[i]<Num2[l])) then
+          //Otherwise check the condition - the highlighted part of the numerator < denominator
+          else if ((CurrPosEl-ToPosEl+1)<Len2) or (((CurrPosEl-ToPosEl+1)=Len2) and (Num1[i]<Num2[j])) then
           begin
 
+            //Exiting the cycle to consider the next highlighted part of the numerator
             FoundLarger:= True;
 
-            if ((CurrPosEl<=Len2) and (CurrPosEl = ToPosEl)) then
+            //Check the condition for exiting the main cycle - the final highlighted part of the numerator < the second number
+            if (CurrPosEl<Len2) or ((CurrPosEl=Len2) and (Num1[i]<Num2[j])) then
               RemLessDiv:= True;
 
-            l:= len2 + 1;
           end;
 
+          //Modernize variables
           i:= i - 1;
-          l:= l - 1;
+          j:= j - 1;
         end;
 
-        SuppVar[k]:= DivEl;
+        //Write the result of the current element in quotient
+        Results[CurrElInQuotient]:= ResDiv;
 
-        DelZero:= False;
-        i:=CurrPosEl;
-        j:= ToPosEl;
-        while (i>=j) and (DelZero = False) do
-        begin
-          if (Num1[i] > 0) then
-            DelZero:= True
-          else if (CurrPosEl>1) then
-          begin
-            if (ToPosEl > 1) and (i<>CurrPosEl) then
-              ToPosEl:= ToPosEl - 1;
-            CurrPosEl:= CurrPosEl - 1;
-          end;
-          i:=i - 1;
-        end;
+      until RemLessDiv = True;
 
-        if (ToPosEl > 1) and (TakeaWay0 = False) then
-          ToPosEl:= ToPosEl - 1;
-
-      until RemLessDiv = True; //Õ≈œ–¿¬»À‹ÕŒ≈ ”—ÀŒ¬»≈ ¬€’Œƒ¿
 
 
       Writeln('The prod of the numbers is:');
 
-      //Else write the answer, mirroring the back
-      //And transfer to symbolic value (+1 because numbering in delphi starts from 1)
-      if SuppVar[i] = 0 then
+      //If the first highlighted part of the numerator was < denominator, then zero is not taken out - correct it (if there is)
+      if Results[1] = 0 then
         i:= 2
       else
         i:= 1;
-      while i<=k do
+
+      //—ount for final element in quotient (Òonsidering division method)
+      CurrElInQuotient:= CurrElInQuotient + ToPosEl - 1;
+
+      //Write the answer, mirroring the back
+      //And transfer to symbolic value (+1 because numbering in delphi starts from 1)
+      while i<=CurrElInQuotient do
       begin
-        Write(NSAlphabet[SuppVar[i]+1]);
+        Write(NSAlphabet[Results[i]+1]);
         i:= i + 1;
       end;
 
       Writeln;
       Writeln('Remainder after division is:');
 
-      for i:=CurrPosEl downto 1 do
-        Write(Num1[i]);
+      //Write the remainder after division, deleting unnecessary zeros
+      DelZero:= False;
+      for i := CurrPosEl downto 1 do
+      begin
+        if (DelZero = False) and (Num1[i] > 0) then
+          DelZero:= True;
+        if (DelZero = True) or (i = 1) then
+          Write(NSAlphabet[Num1[i]+1]);
+      end;
+
     end;
 
   end;

@@ -25,7 +25,7 @@ Var
   MaxNS, NS, Amount, j, Res, CarryRes, Sum, CarrySum : ShortInt;
   Prod, CarryProd, PosElement : Word;
   Len1, Len2, Len3, CurrElInQuotient, k,  i, p, ResDiv, ToPosEl, CurrPosEl: Word;
-  flag, FoundLarger, DelZero, RemLessDiv: boolean;
+  flag, FoundLarger, DelZero: boolean;
   //Num1 - array of digits of the first number (divider)
   //Num2 - array of digits of the second numbers (denominator)
   //Num3 - array of digits of the third numbers (multiplier in the denominator)
@@ -52,8 +52,6 @@ Var
   //flag - flag to confirm the correctness of entering numbers
   //FoundLarger - when a larger number is found, the variable will become true
   //DelZero - variable to remove the unnecessary zeros (if there is)
-  //RemLessDiv - when the remainder of the numerator (Num1) after dividing
-  //the previous elements is less than the denominator (Num2), the variable will be true
 
 Begin
 
@@ -343,8 +341,8 @@ Begin
           if (Num1[i] > 0) then
             DelZero:= True
 
-          //Else (if CurrPosEl>1) move the current position of the element to the left
-          else if (CurrPosEl>1) then
+          //Else move the current position of the element to the left
+          else
           begin
 
             //Also move ToPosEl (one time less than CurrPosEl to maintain the logic of division into a column)
@@ -359,9 +357,8 @@ Begin
           i:=i - 1;
         end;
 
-        //After dividing, take out the next digit (if ToPosEl>1)
-        if (ToPosEl > 1) then
-          ToPosEl:= ToPosEl - 1;
+        //After dividing, take out the next digit
+        ToPosEl:= ToPosEl - 1;
 
         //Initialize the variables
         CurrElInQuotient:= CurrElInQuotient+1;
@@ -375,7 +372,7 @@ Begin
         begin
 
           //Checking conditions for division (the highlighted part of the numerator >= denominator)
-          if (((CurrPosEl-ToPosEl+1)=Len2) and (Num1[i]>Num2[j])) or ((CurrPosEl-ToPosEl+1)>Len2)
+          if ((CurrPosEl-ToPosEl+1)>Len2) or (((CurrPosEl-ToPosEl+1)=Len2) and (Num1[i]>Num2[j]))
           or ((j = 1) and (Num1[i]=Num2[j])) then
           begin
 
@@ -414,36 +411,20 @@ Begin
             //Since the highlighted part of the numerator was taken away from the denominator once, perform +1
             ResDiv:= ResDiv + 1;
 
-            //Checking for deletion of digits
-            if (Num1[CurrPosEl] = 0) and (CurrPosEl > 1) then
-            begin
-
-              //Correct CurrPosEl
+            //If a digit has been deleted, correct CurrPosEl
+            if (Num1[CurrPosEl] = 0) then
               CurrPosEl:= CurrPosEl - 1;
 
-              //Reset i to initial value (considering changes CurrPosEl)
-              i:= CurrPosEl + 1;
-            end
-            else
-              //Reset i to initial value
-              i:= CurrPosEl + 1;
-
-            //Reset j to initial value
+            //Reset i and j to initial value for next check
+            i:= CurrPosEl + 1;
             j:= len2 + 1;
           end
 
           //Otherwise check the condition - the highlighted part of the numerator < denominator
+          //Exiting the cycle to consider the next highlighted part of the numerator
           else if ((CurrPosEl-ToPosEl+1)<Len2) or (((CurrPosEl-ToPosEl+1)=Len2) and (Num1[i]<Num2[j])) then
-          begin
-
-            //Exiting the cycle to consider the next highlighted part of the numerator
             FoundLarger:= True;
 
-            //Check the condition for exiting the main cycle - the final highlighted part of the numerator < the second number
-            if (CurrPosEl<Len2) or ((CurrPosEl=Len2) and (Num1[i]<Num2[j])) then
-              RemLessDiv:= True;
-
-          end;
 
           //Modernize variables
           i:= i - 1;
@@ -453,7 +434,7 @@ Begin
         //Write the result of the current element in quotient
         Results[CurrElInQuotient]:= ResDiv;
 
-      until RemLessDiv = True;
+      until (CurrPosEl<Len2) or ((CurrPosEl=Len2) and (Num1[i+1]<Num2[j+1]));
 
 
 
