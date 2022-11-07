@@ -325,7 +325,7 @@ Begin
       //Initialize the variables (considering that they are written in mirrored view)
       ToPosEl:= Len1 - Len2 + 2; //+2 since at the beginning of the cycle will decrease by 1
       CurrPosEl:= len1;
-      CurrElInQuotient:=0; //0 since at the beginning of the cycle will add 1
+      CurrElInQuotient:=0;
       repeat
 
         //Initialize variables
@@ -333,7 +333,7 @@ Begin
         i:=CurrPosEl;
         j:= ToPosEl;
 
-        //Remove unnecessary zeros in the numerator (if there is)
+        //Remove unnecessary zeros (if there is)
         while (i>=j) and (DelZero = False) do
         begin
 

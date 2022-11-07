@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.422,C:\Users\Egor\Desktop\Учёба\ОАиП\WarmUp6\Delphi\WarmUp6.dproj=C:\Users\Egor\Desktop\Учёба\ОАиП\BetaVersion\WarmUp6\WarmUp6.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.024,C:\Users\Egor\Desktop\Учёба\ОАиП\WarmUp6\Delphi\WarmUp6.dproj=C:\Users\Egor\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.070,C:\Users\Egor\Desktop\ОАиП\WarmUp7\WarmUp7.dproj=C:\Users\Egor\Desktop\ОАиП\WarmUp6\Delphi\WarmUp6.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.070,C:\Users\Egor\Desktop\ОАиП\WarmUp6\Delphi\WarmUp6.dproj=C:\Users\Egor\Desktop\ОАиП\WarmUp7\WarmUp7.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.024,C:\Users\Egor\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Egor\Desktop\Учёба\ОАиП\WarmUp6\Delphi\WarmUp6.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.422,C:\Users\Egor\Desktop\Учёба\ОАиП\BetaVersion\WarmUp6\WarmUp6.dproj=C:\Users\Egor\Desktop\Учёба\ОАиП\WarmUp6\Delphi\WarmUp6.dproj</Transaction>
   </Transactions>
 </BorlandProject>
