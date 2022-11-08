@@ -115,7 +115,7 @@ Begin
     Writeln('Symbol ', NSAlphabet[i+1],' Value = ',i);
   Writeln;
 
-  Writeln('Attention! Numerator must be >= denominator! And remember that division by zero is disallowed');
+  Writeln('Attention! Numerator must be >= denominator');
   Writeln('Enter numbers (no more than ',MaxSize,' digits).');
 
   //Cycle with postcondition for entering correct data.
@@ -136,15 +136,6 @@ Begin
       Writeln('Wrong input of number! The length of the number must be no more than ',MaxSize,' digits.');
       flag:= True;
     end
-
-    //Else if length >1, the first digit cannot be 0 (in the mirrored view it is last)
-    else if (Len1 > 1) and (str[1] = '0') then
-    begin
-      Writeln('Wrong input of number! The first digit of a number cannot be 0');
-      flag:= True;
-    end
-
-    //Else writing a number to an array and checking for valid symbols
     else
     begin
 
@@ -175,7 +166,6 @@ Begin
 
   Until flag = False;
 
-
   Writeln('/');
 
   //Cycle with postcondition for entering correct data.
@@ -196,19 +186,6 @@ Begin
       Writeln('Wrong input of number! The length of the number must be no more than ',MaxSize,' digits.');
       flag:= True;
     end
-
-    //Else if the first digit is 0 (in the mirrored view it is last),
-    //then the input is invalid. Next, determine the type of error
-    else if str[1] = '0' then
-    begin
-      if Len2 > 1 then
-        Writeln('Wrong input of number! The first digit of a number cannot be 0')
-      else
-        Writeln('Wrong input of number! Division by zero is disallowed');
-      flag:= True;
-    end
-
-    //Else writing a number to an array and checking for valid symbols
     else
     begin
 
@@ -241,6 +218,8 @@ Begin
 
 
 
+
+
   //The cycle go (Amount-2) times to multiply all the numbers in the denominator
   for j := 1 to (Amount-2) do
   begin
@@ -265,19 +244,6 @@ Begin
         Writeln('Wrong input of number! The length of the number must be no more than ',MaxSize,' digits.');
         flag:= True;
       end
-
-      //Else if the first digit is 0 (in the mirrored view it is last),
-      //then the input is invalid. Next, determine the type of error
-      else if str[1] = '0' then
-      begin
-        if Len3 > 1 then
-          Writeln('Wrong input of number! The first digit of a number cannot be 0')
-        else
-          Writeln('Wrong input of number! Division by zero is disallowed');
-        flag:= True;
-      end
-
-      //Else writing a number to an array and checking for valid symbols
       else
       begin
 
@@ -386,6 +352,8 @@ Begin
 
 
 
+
+
   //Check that the number of digits in the numerator must be >= digits in the denominator
   if Len2>Len1 then
     flag:= True
@@ -436,7 +404,7 @@ Begin
       while (i>=j) and (DelZero = False) do
       begin
 
-        //When found the number (1..NS-1) exit the cycle
+        //When found the number (1..NS) exit the cycle
         if (Num1[i] > 0) then
           DelZero:= True
 
@@ -535,8 +503,6 @@ Begin
 
     //Check for output: numerator remainder must be < denominator
     until (CurrPosEl<Len2) or ((CurrPosEl=Len2) and (Num1[i+1]<Num2[j+1]));
-
-
 
 
 

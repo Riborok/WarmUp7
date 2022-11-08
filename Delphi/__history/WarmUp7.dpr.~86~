@@ -137,14 +137,14 @@ Begin
       flag:= True;
     end
 
-    //Else if length >1, the first digit cannot be 0 (in the mirrored view it is last)
-    else if (Len1 > 1) and (str[1] = '0') then
+    //If length >1, the first digit cannot be 0
+    else if (Len1 > 1) and (Num1[1] = 0) then
     begin
       Writeln('Wrong input of number! The first digit of a number cannot be 0');
       flag:= True;
     end
 
-    //Else writing a number to an array and checking for valid symbols
+    //Writing a number to an array and checking for valid symbols
     else
     begin
 
@@ -197,18 +197,20 @@ Begin
       flag:= True;
     end
 
-    //Else if the first digit is 0 (in the mirrored view it is last),
-    //then the input is invalid. Next, determine the type of error
-    else if str[1] = '0' then
-    begin
+    //If the first digit is 0, then the input is invalid. Next, determine the type of error
+    else if Num2[1] = 0 then
       if Len2 > 1 then
-        Writeln('Wrong input of number! The first digit of a number cannot be 0')
+      begin
+        Writeln('Wrong input of number! The first digit of a number cannot be 0');
+        flag:= True;
+      end
       else
+      begin
         Writeln('Wrong input of number! Division by zero is disallowed');
-      flag:= True;
-    end
+        flag:= True;
+      end
 
-    //Else writing a number to an array and checking for valid symbols
+    //Writing a number to an array and checking for valid symbols
     else
     begin
 
@@ -266,18 +268,20 @@ Begin
         flag:= True;
       end
 
-      //Else if the first digit is 0 (in the mirrored view it is last),
-      //then the input is invalid. Next, determine the type of error
-      else if str[1] = '0' then
-      begin
+      //If the first digit is 0, then the input is invalid. Next, determine the type of error
+      else if Num3[1] = 0 then
         if Len3 > 1 then
-          Writeln('Wrong input of number! The first digit of a number cannot be 0')
+        begin
+          Writeln('Wrong input of number! The first digit of a number cannot be 0');
+          flag:= True;
+        end
         else
+        begin
           Writeln('Wrong input of number! Division by zero is disallowed');
-        flag:= True;
-      end
+          flag:= True;
+        end
 
-      //Else writing a number to an array and checking for valid symbols
+      //Writing a number to an array and checking for valid symbols
       else
       begin
 
