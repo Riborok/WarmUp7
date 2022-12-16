@@ -1,7 +1,7 @@
 # WarmUp №7. Long arithmetic (division)
 ---
 ### Task:
-![The task](https://i.imgur.com/CVH2GjN.png)
+![The task](https://i.imgur.com/ka1F5fy.png)
 
 >The program calculates the quotient of the numbers.
 
